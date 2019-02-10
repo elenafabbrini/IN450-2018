@@ -1,29 +1,37 @@
 f=y^6+y+1;
 len=Exponent[f,y];
 
-FieldInversion[-1]=1
-FieldInversion[1]=1
-FieldInversion[k_]:=FieldInversion[k]=
-Module[{u,v,g1,g2,i,ux,vx},
+FieldInversion[-1]=1;
+FieldInversion[1]=1;
+FieldInversion[k_] := FieldInversion[k] = Module[{u,v,g1,g2,i,ux,vx},
 (
-u=PolynomialMod[k,2];
-v=f;
-g1=1;
-g2=0;
-i=0;
-While[While[Coefficient[u,y,0]==0,
-(
-u=Simplify[u/y];
-If[Coefficient[g1,y,0]==0,g1=g1/y,g1=Simplify[PolynomialMod[(g1+f),{2}]/y]]
-)];(u=!=1)&&(i<10),
-If[Exponent[u,y]<Exponent[v,y],
-ux=v;v=u;u=ux;
-ux=g2;g2=g1;g1=ux];
-u=PolynomialMod[(u+v),{2}];
-g1=PolynomialMod[(g1+g2),{2}];
-i++;
-];
-g1)];
+	u=PolynomialMod[k,2]; v=f; g1=1; g2=0;
+	i=0;
+	While[
+		While[Coefficient[u,y,0]==0,
+			(
+				u=Simplify[u/y];
+				If[Coefficient[g1,y,0]==0,
+					g1=g1/y,
+					g1=Simplify[PolynomialMod[(g1+f),{2}]/y]
+				]
+			)
+		];
+		(u=!=1)&&(i<10),
+		(
+			If[Exponent[u,y]<Exponent[v,y],
+				(
+					ux=v;v=u;u=ux;
+					ux=g2;g2=g1;g1=ux
+				)
+			];
+			u=PolynomialMod[(u+v),{2}];
+			g1=PolynomialMod[(g1+g2),{2}];
+			i++;
+		)
+	];
+	g1
+)];
 
 Poly[n_]:=Reverse[IntegerDigits[n,2,6]].Table[y^i,{i,0,6-1}];
 
@@ -55,10 +63,12 @@ Produttoria[k_]:=Partition[((x (Xp[[k]]-Drop[Xp,{k}])^(-1))//.rules)+(-Drop[Xp,{
 
 f2[c_]:=PolynomialMod[Collect[Expand[c[[1]] c[[2]]],x]//.rules,2];
 ApplyStep[p2_]:=If[(Length[p2]>=2),Partition[Map[f2,p2],2],f2[p2[[1]]],p2];
-points=64
-Xp=Map[GF,Range[points]-1];Length[Xp]
-Yp=Map[GF,Table[RandomInteger[1],{points}]]
-Length[Yp]
+
+(* EXAMPLE RUN *)
+Print[points=64];
+Print[Xp=Map[GF,Range[points]-1];Length[Xp]];
+Print[Yp=Map[GF,Table[RandomInteger[1],{points}]];]
+Print[Length[Yp]];
 sum=0;
 XX=Table[
 {Produttoria[kk],
@@ -69,10 +79,10 @@ stt=f2[tt],
 sum=f2[{sum+ stt,1}]},{kk,1,points}];
 TableForm[XX,TableDepth->2]
 lagrange=PolynomialMod[XX[[-1,-1]],{2}]
-lagrange/.GF[a_]:>a
+Print["Lagrange polynomial ",lagrange/.GF[a_]:>a];
 (* VERIFICA *)
 legenda={"x_i","y_i","L(x_i)"};
-TableForm@Join[{legenda},Table[{Xp[[i]],PolynomialMod[PolynomialMod[(lagrange/.x->Xp[[i]])//.rules,{2}]//.rules,{2}],Yp[[i]]},{i,1,Length[Xp]}]]
+Print[TableForm@Join[{legenda},Table[{Xp[[i]],PolynomialMod[PolynomialMod[(lagrange/.x->Xp[[i]])//.rules,{2}]//.rules,{2}],Yp[[i]]},{i,1,Length[Xp]}]]];
 
 
 
