@@ -69,18 +69,26 @@ Print[points=64];
 Print[Xp=Map[GF,Range[points]-1];Length[Xp]];
 Print[Yp=Map[GF,Table[RandomInteger[1],{points}]];]
 Print[Length[Yp]];
+
+(* MAIN COMPUTATION of THE TABLE WITH PARTIAL RESULTS*)
 sum=0;
 XX=Table[
-{Produttoria[kk],
-Yp[[kk]],
-pp=Nest[ApplyStep,Produttoria[kk],Log[2,points]],
-tt=Yp[[kk]] pp,
-stt=f2[tt],
-sum=f2[{sum+ stt,1}]},{kk,1,points}];
-TableForm[XX,TableDepth->2]
-lagrange=PolynomialMod[XX[[-1,-1]],{2}]
+	{
+	Produttoria[kk],
+	Yp[[kk]],
+	pp=Nest[ApplyStep,Produttoria[kk],Log[2,points]],
+	tt=Yp[[kk]] pp,
+	stt=f2[tt],
+	sum=f2[{sum+ stt,1}]},{kk,1,points}
+];
+
+Print[TableForm[XX,TableDepth->2]];
+
+lagrange=PolynomialMod[XX[[-1,-1]],{2}];
+
 Print["Lagrange polynomial ",lagrange/.GF[a_]:>a];
-(* VERIFICA *)
+
+(* VERIFICATION *)
 legenda={"x_i","y_i","L(x_i)"};
 Print[TableForm@Join[{legenda},Table[{Xp[[i]],PolynomialMod[PolynomialMod[(lagrange/.x->Xp[[i]])//.rules,{2}]//.rules,{2}],Yp[[i]]},{i,1,Length[Xp]}]]];
 
