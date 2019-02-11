@@ -1,3 +1,13 @@
+DES1 = {{14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7}, {0,
+15, 7, 4, 14, 2, 13, 10, 3, 6, 12, 11, 9, 5, 3, 8}, {4, 1, 14, 8,
+13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0}, {15, 12, 8, 2, 4, 9, 1,
+7, 5, 11, 3, 14, 10, 0, 6, 13}};
+Slice[sbox_, x_, bit_] :=
+Mod[Floor[
+sbox[[ (Mod[x, 2] + Mod[Floor[x/32], 2] 2) + 1,
+If[Floor[x/2] > 32, Floor[x/2] - 32, Floor[x/2] + 1  ]]]/(2^
+bit)], 2];
+
 f=y^6+y+1;
 len=Exponent[f,y];
 
@@ -67,7 +77,7 @@ ApplyStep[p2_]:=If[(Length[p2]>=2),Partition[Map[f2,p2],2],f2[p2[[1]]],p2];
 (* EXAMPLE RUN *)
 Print[points=64];
 Print[Xp=Map[GF,Range[points]-1];Length[Xp]];
-Print[Yp=Map[GF,Table[RandomInteger[1],{points}]];]
+Print[Yp=Map[GF,Table[Slice[DES1,i,1],{i,1,points}]];]
 Print[Length[Yp]];
 
 (* MAIN COMPUTATION of THE TABLE WITH PARTIAL RESULTS*)
