@@ -62,7 +62,7 @@ rule4=Power[GF[a_],-1]:>GF[FI[a]];
 rule5=-GF[a_]:>GF[a];
 rule6=(a_;IntegerQ[a]) GF[b_]:>GF[Nest[FA[#,b]&,a,a-1]];
 rule7=GF[0]->0;
-(*
+(*   
 rule8 = 1\[Rule] GF[1];
 rule9=b_ GF[a_]\[RuleDelayed] Mod[b,2] GF[a];
 *)
