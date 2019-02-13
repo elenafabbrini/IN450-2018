@@ -4,8 +4,8 @@ DES1 = {{14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7}, {0,
 7, 5, 11, 3, 14, 10, 0, 6, 13}};
 Slice[sbox_, x_, bit_] :=
 Mod[Floor[
-sbox[[ (Mod[x, 2] + Mod[Floor[x/32], 2] 2) + 1,
-If[Floor[x/2] > 32, Floor[x/2] - 32, Floor[x/2] + 1  ]]]/(2^
+sbox[[ (Mod[x, 2] + Mod[Floor[x/16], 2] 2) + 1,
+If[Floor[x/2] >=16, Floor[x/2] - 16+1, Floor[x/2] + 1  ]]]/(2^
 bit)], 2];
 
 f=y^6+y+1;
