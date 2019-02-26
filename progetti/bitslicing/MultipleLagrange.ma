@@ -130,28 +130,29 @@ sbox[[ (Mod[x, 2] + Mod[Floor[x/16], 2] 2) + 1,
 If[Floor[x/2] >=16, Floor[x/2] - 16+1, Floor[x/2] + 1  ]]]/(2^
 bit)], 2];
 
+LagrangeSlice[i_] := Lagrange[Map[GF,Table[Slice[DES[[Floor[i/4] + 1]], j, Mod[i, 4]], {j, 0,points - 1}]]]
 
-pol1 = Range[32];
-pol2 = Partition[(pol1[[PERM]])[[EXPANSION]], 6];
-po[i_] := Lagrange[Map[GF,Table[Slice[DES[[Floor[i/4] + 1]], j, Mod[i, 4]], {j, 0,points - 1}]]]
-
-DesBlock[i_] := Map[po, pol2[[i]]]
+DesBlock[i_] := Module[{pol1,pol2},
+		(
+			pol1 = Range[32];
+			pol2 = Partition[(pol1[[PERM]])[[EXPANSION]], 6];
+			Map[LagrangeSlice, pol2[[i]]]
+		)
+];
 
 var[i_] :=Map[ToExpression["x" <> ToString[#]] &, Floor[pol2[[i]]/4] + 1]
 sub[k_] := Map[Rule[x, #] &, var[k]]
-Composed[s_] := ExpandAll[ Sum[GF[2^(Length[var[s]] - 1 - j)] po[s][[j + 1]] /.sub[s][[j + 1]], {j, 0, Length[var[s]] - 1}]] //. rules
+Composed[s_] := ExpandAll[ Sum[GF[2^(Length[var[s]] - 1 - j)] LagrangeSlice[s][[j + 1]] /.sub[s][[j + 1]], {j, 0, Length[var[s]] - 1}]] //. rules
 
 FinalPoly[P_, composed_] :=	f2[{P /. Join @@ Table[{x^(2 i) -> Map[#^(2 i) &, composed], x^(2 i + 1) -> (composed Map[#^(2 i) &, composed])}, {i, 1, Floor[Exponent[P, x]/2]}], 1}]
 
-(* EXAMPLE RUN *)
+(* EXAMPLE RUN of BIT-SLICING*)
 
-
-(* Il polinomio P1 risulta troppo complesso pure con le \
-semplificazioni dovute al campo finito quindi il polinomio viene \
-calcolato espressamente, provo con un polinomio di grado inferiore *)
-
-P2 = Select[P1[x], Exponent[#, x] <= 2 &]
-FinalPoly[P2, composed]
+bit = 2 ; 										(* we select the slice *)
+degree = 2 ; 									(* approximation degree of the second round s-box *)
+P2 = Select[LagrangeSlice[1], Exponent[#, x] <= degree &]; (* we truncate the Lagrange polynomial to degree *)
+composed=Composed[bit];
+FinalPoly[P2, composed];
 
 (* RUN PRELIMINARI - TEST INIZIALI - da cancellare*)
 
